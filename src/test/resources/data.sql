@@ -1,0 +1,11 @@
+INSERT INTO product (name, description, price) VALUES
+                                                   ('Laptop Pro X15', 'Hochleistungslaptop mit 15-Zoll-Display, 16GB RAM und 512GB SSD', 1299.99),
+                                                   ('Smartphone Galaxy S22', 'Flaggschiff-Smartphone mit 6,2-Zoll-AMOLED-Display und 5G-Unterstützung', 899.50),
+                                                   ('Bluetooth-Kopfhörer', 'Kabellose Over-Ear-Kopfhörer mit Geräuschunterdrückung und 30 Stunden Akkulaufzeit', 249.95),
+                                                   ('Kaffeemaschine Deluxe', 'Vollautomatische Kaffeemaschine mit integriertem Mahlwerk und Milchaufschäumer', 599.00),
+                                                   ('Fitness-Tracker', 'Wasserdichter Fitness-Tracker mit Herzfrequenzmessung und Schlafanalyse', 79.99),
+                                                   ('E-Book Reader', 'Kompakter E-Reader mit 8GB Speicher und frontseitiger Beleuchtung', 129.00),
+                                                   ('Gaming-Maus', 'Ergonomische Gaming-Maus mit RGB-Beleuchtung und programmierbaren Tasten', 59.95),
+                                                   ('Smart-Home Hub', 'Zentrales Steuergerät für Ihre Smart-Home-Geräte mit Sprachsteuerung', 149.99),
+                                                   ('Digitalkamera', 'Spiegelreflexkamera mit 24 Megapixel und 4K-Videoaufnahme', 799.00),
+                                                   ('Bluetooth-Lautsprecher', 'Tragbarer wasserdichter Lautsprecher mit 20 Stunden Akkulaufzeit', 89.95);
