@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static de.rjst.ps.cache.CacheConfig.ALL_PRODUCT_KEY_EXPRESSION;
 import static de.rjst.ps.cache.CacheConfig.PRODUCT_CACHE;
 
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class ProductsSupplier implements Supplier<List<Product>> {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
 
-    @Cacheable(PRODUCT_CACHE)
+    @Cacheable(cacheNames = PRODUCT_CACHE, key = ALL_PRODUCT_KEY_EXPRESSION)
     @Override
     public List<Product> get() {
         return productRepository.findAll()

@@ -1,4 +1,4 @@
-package de.rjst.ps.container.restassured;
+package de.rjst.ps.container.datasource;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;

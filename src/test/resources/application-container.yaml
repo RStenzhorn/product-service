@@ -14,11 +14,13 @@ spring:
     default-timeout: 1s
   cache:
     redis:
-      time-to-live: 5m
+      time-to-live: 10s
   data:
     redis:
       repositories:
         enabled: false
+      connect-timeout: 5s
+      timeout: 5s
   cloud:
     openfeign:
       client:

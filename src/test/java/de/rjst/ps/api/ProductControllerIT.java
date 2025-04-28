@@ -1,23 +1,26 @@
 package de.rjst.ps.api;
 
+import com.github.dockerjava.api.DockerClient;
+import com.redis.testcontainers.RedisContainer;
 import de.rjst.ps.GenericValidator;
 import de.rjst.ps.TestInputObject;
 import de.rjst.ps.TestOutputObject;
 import de.rjst.ps.api.model.ErrorResponse;
 import de.rjst.ps.api.model.Product;
 import de.rjst.ps.container.ContainerTest;
-import de.rjst.ps.container.util.TableLockRepository;
-import de.rjst.ps.container.restassured.ProductRestAssured;
+import de.rjst.ps.container.datasource.CacheCleaner;
+import de.rjst.ps.container.datasource.ProductControllerRestAssured;
+import de.rjst.ps.container.datasource.TableLockRepository;
+import de.rjst.ps.container.mock.ExchangeServiceMock;
 import de.rjst.ps.database.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
+import java.math.BigDecimal;
 
 import static de.rjst.ps.TestConstant.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -26,7 +29,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 class ProductControllerIT {
 
     @Autowired
-    private ProductRestAssured unterTest;
+    private ProductControllerRestAssured unterTest;
 
     @Autowired
     private ProductRepository productRepository;
@@ -35,11 +38,17 @@ class ProductControllerIT {
     private TableLockRepository tableLockRepository;
 
     @Autowired
-    private CacheManager cacheManager;
+    private CacheCleaner cacheCleaner;
+
+    @Autowired
+    private ExchangeServiceMock exchangeServiceMock;
+
+    @Autowired
+    private RedisContainer redisContainer;
 
     @BeforeEach
     void setUp() {
-        cacheManager.getCacheNames().forEach(cacheName -> Objects.requireNonNull(cacheManager.getCache(cacheName)).clear());
+        cacheCleaner.run();
     }
 
     @Test
@@ -61,6 +70,23 @@ class ProductControllerIT {
 
         final var result = unterTest.getProducts();
         assertThat(result.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+
+    @Test
+    @DisplayName("GET /products should return HTTP 500 reason redis down")
+    void getProductsRedisDown() {
+        final var dockerClient = redisContainer.getDockerClient();
+        final var containerId = redisContainer.getContainerId();
+
+        dockerClient.pauseContainerCmd(containerId).exec();
+
+        final var result = unterTest.getProducts();
+        final var response = result.body().as(ErrorResponse.class);
+
+        assertThat(result.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        assertThat(response.getMessage()).isEqualTo("Redis command timed out");
+
+        dockerClient.unpauseContainerCmd(containerId).exec();
     }
 
     @Test
@@ -143,9 +169,39 @@ class ProductControllerIT {
         assertThat(response.getMessage()).isEqualTo("price: muss größer 0 sein");
     }
 
+    @Test
+    @DisplayName("GET /product/{id} should return HTTP 200 with prices")
+    void getProductPriceSuccessful_ExchangeOk() {
+        exchangeServiceMock.getExchange(HttpStatus.OK);
+
+        final var productEntity = productRepository.findAll().stream().findFirst().orElseThrow();
+        final var response = unterTest.getProductPrice(productEntity.getId());
+        final var prices = response.body().jsonPath().getMap("prices", String.class, BigDecimal.class);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(prices.size()).isEqualTo(31);
+    }
 
     @Test
-    void getProductPrice() {
+    @DisplayName("GET /product/{id} should return HTTP 400 with message not found")
+    void getProductPriceNotFound() {
+        final var response = unterTest.getProductPrice(MAX_LONG);
+        final var products = response.body().as(ErrorResponse.class);
 
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(products.getMessage()).isEqualTo("Product not found");
+    }
+
+    @Test
+    @DisplayName("GET /product/{id} should return HTTP 500 with error message")
+    void getProductPriceSuccessful_ExchangeBadRequest() {
+        exchangeServiceMock.getExchange(HttpStatus.BAD_REQUEST);
+
+        final var productEntity = productRepository.findAll().stream().findFirst().orElseThrow();
+        final var response = unterTest.getProductPrice(productEntity.getId());
+        final var products = response.body().as(ErrorResponse.class);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        assertThat(products.getMessage()).isEqualTo("Error while getting exchange rate");
     }
 }

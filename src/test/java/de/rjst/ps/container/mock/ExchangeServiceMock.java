@@ -52,5 +52,4 @@ public class ExchangeServiceMock {
         final var inputStream = source.getInputStream();
         return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
     }
-
 }

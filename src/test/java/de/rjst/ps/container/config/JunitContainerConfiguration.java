@@ -25,7 +25,7 @@ public class JunitContainerConfiguration {
     @Bean
     @ServiceConnection(name = "redis")
     public RedisContainer redisContainer() {
-        return new RedisContainer(REDIS);
+        return new RedisContainer(REDIS).withCommand("redis-server", "--protected-mode", "no");
     }
 
     @Bean

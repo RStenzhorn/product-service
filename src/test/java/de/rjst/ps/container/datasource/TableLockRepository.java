@@ -1,4 +1,4 @@
-package de.rjst.ps.container.util;
+package de.rjst.ps.container.datasource;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;

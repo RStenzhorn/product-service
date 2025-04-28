@@ -1,4 +1,4 @@
-package de.rjst.ps.container.restassured;
+package de.rjst.ps.container.datasource;
 
 import de.rjst.ps.api.ProductEndpoint;
 import de.rjst.ps.api.model.ProductDto;
@@ -15,7 +15,7 @@ import static io.restassured.RestAssured.given;
 @RequiredArgsConstructor
 @Service
 @Profile("container")
-public class ProductRestAssured {
+public class ProductControllerRestAssured {
 
     private static final String ID = "id";
 
