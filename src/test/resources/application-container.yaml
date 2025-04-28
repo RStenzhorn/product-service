@@ -14,7 +14,7 @@ spring:
     default-timeout: 1s
   cache:
     redis:
-      time-to-live: 1s
+      time-to-live: 5m
   data:
     redis:
       repositories:

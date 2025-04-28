@@ -13,6 +13,7 @@ spring:
   cache:
     redis:
       time-to-live: 1m
+    type: redis
   data:
     redis:
       repositories:
@@ -28,6 +29,7 @@ springdoc:
   swagger-ui:
     use-root-path: true
 server:
+  port: 9090
   error:
     include-message: always
     include-stacktrace: never

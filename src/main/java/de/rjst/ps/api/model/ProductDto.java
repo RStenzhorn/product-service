@@ -1,8 +1,6 @@
 package de.rjst.ps.api.model;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -15,8 +13,10 @@ public class ProductDto {
 
     private String description;
 
-    @Min(0L)
-    @Max(10000L)
+    @NotNull
+    @Digits(integer = 5, fraction = 2)
+    @DecimalMin(value = "0", inclusive = false)
+    @DecimalMax("10000")
     private BigDecimal price;
 
 }

@@ -21,7 +21,6 @@ import java.util.List;
 @Tag(name = "Products")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("products")
 @Transactional(propagation = Propagation.REQUIRES_NEW)
 public class ProductController {
 
@@ -29,19 +28,19 @@ public class ProductController {
     private final CreateProductFunction createProductFunction;
     private final ProductPriceSupplier productPriceSupplier;
 
-    @GetMapping
+    @GetMapping(ProductEndpoint.PRODUCTS)
     @ResponseStatus(HttpStatus.OK)
     public List<Product> getProducts() {
         return productsSupplier.get();
     }
 
-    @PostMapping
+    @PostMapping(ProductEndpoint.PRODUCTS)
     @ResponseStatus(HttpStatus.OK)
     public Product createProduct(@Valid @RequestBody final ProductDto productDto) {
         return createProductFunction.apply(productDto);
     }
 
-    @GetMapping("{id}/prices")
+    @GetMapping(ProductEndpoint.PRODUCT_PRICE)
     @ResponseStatus(HttpStatus.OK)
     public ProductPrice getProductPrice(@Min(1L) @PathVariable final Long id) {
         return productPriceSupplier.apply(id);

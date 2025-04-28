@@ -6,6 +6,8 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.annotation.Bean;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+import java.util.List;
+
 import static de.rjst.ps.container.config.ContainerImages.POSTGRESQL;
 import static de.rjst.ps.container.config.ContainerImages.REDIS;
 
@@ -15,14 +17,20 @@ public class LocalContainerConfiguration {
     @Bean
     @ServiceConnection
     public PostgreSQLContainer<?> postgresContainer() {
-        return new PostgreSQLContainer<>(POSTGRESQL)
-                .withDatabaseName("products");
+        final var postgreSQLContainer = new PostgreSQLContainer<>(POSTGRESQL);
+        postgreSQLContainer.withDatabaseName("products");
+        postgreSQLContainer.withUsername("postgres");
+        postgreSQLContainer.withPassword("password");
+        postgreSQLContainer.setPortBindings(List.of("5432:5432"));
+        return postgreSQLContainer;
     }
 
     @Bean
     @ServiceConnection(name = "redis")
     public RedisContainer redisContainer() {
-        return new RedisContainer(REDIS);
+        final var redisContainer = new RedisContainer(REDIS);
+        redisContainer.setPortBindings(List.of("6379:6379"));
+        return redisContainer;
     }
 
 }
