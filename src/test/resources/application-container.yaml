@@ -3,6 +3,8 @@ spring:
     name: product-service
   datasource:
     driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 5000
   jpa:
     hibernate:
       ddl-auto: none
