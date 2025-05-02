@@ -19,7 +19,8 @@ public class JunitContainerConfiguration {
     @ServiceConnection
     public PostgreSQLContainer<?> postgresContainer() {
         return new PostgreSQLContainer<>(POSTGRESQL)
-                .withDatabaseName("products");
+                .withDatabaseName("products")
+                .withInitScript("init.sql");
     }
 
     @Bean

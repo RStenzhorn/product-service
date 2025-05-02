@@ -7,9 +7,6 @@ spring:
     hibernate:
       ddl-auto: none
     open-in-view: false
-  sql:
-    init:
-      mode: always
   cache:
     redis:
       time-to-live: 1m

@@ -22,6 +22,7 @@ public class LocalContainerConfiguration {
         postgreSQLContainer.withUsername("postgres");
         postgreSQLContainer.withPassword("password");
         postgreSQLContainer.setPortBindings(List.of("5432:5432"));
+        postgreSQLContainer.withInitScript("init.sql");
         return postgreSQLContainer;
     }
 

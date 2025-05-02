@@ -9,9 +9,6 @@ spring:
     hibernate:
       ddl-auto: none
     open-in-view: false
-  sql:
-    init:
-      mode: always
   transaction:
     default-timeout: 1s
   cache:
